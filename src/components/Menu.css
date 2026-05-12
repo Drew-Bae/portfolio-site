@@ -11,7 +11,30 @@
     width: 800px;
 }
 
+.blob-button-shell {
+    position: relative;
+    width: 150px;
+    height: 150px;
+}
+
+.audio-blob-svg {
+    position: absolute;
+    top: -25px;
+    left: -25px;
+    background-color: pink;
+    width: 150px;
+    height: 150px;
+    pointer-events: none;
+    z-index: 0;
+    overflow: visible;
+}
+
+.audio-blob-path {
+    fill: #3498db;
+}
+
 .circle {
+    position: relative;
     width: 100px;
     height: 100px;
     border: none;
@@ -60,7 +83,6 @@
     pointer-events: auto;
     transform: translateY(-50%) translateX(0) scale(1);
 }
-
 
 .menu-content {
     opacity: 0;

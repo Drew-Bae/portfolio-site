@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import MusicPlayer from './MusicPlayer';
 import './Menu.css';
+import AudioBlob from './AudioBlob';
 
 function Menu() {
     const [isOpen, setIsOpen] = useState(false);
@@ -15,12 +16,16 @@ function Menu() {
                 >
 
                 <div className={`button-stack ${isOpen ? 'button-stack-open' : ''}`}>
-                    <button
-                        className="circle"
-                        onClick={() => setIsOpen(!isOpen)}
-                    >
-                        DB
-                    </button>
+                    <div className="blob-button-shell">
+                        <AudioBlob level={1} isPlaying={true} />
+
+                        <button
+                            className="circle"
+                            onClick={() => setIsOpen(!isOpen)}
+                        >
+                            DB
+                        </button>
+                    </div>
 
                     <div
                         className={`music-player-wrapper ${
