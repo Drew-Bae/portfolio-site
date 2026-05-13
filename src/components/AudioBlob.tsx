@@ -89,7 +89,7 @@ function AudioBlob({ level, isPlaying }: AudioBlobProps) {
       // Later, real audio will come from the `level` prop.
       // For now, this lets the blob move even when level is 0.
       const targetLevel = isCurrentlyPlaying
-        ? Math.max(levelRef.current, fakeLevel * 0.45)
+        ? Math.max(levelRef.current, fakeLevel * 0.12)
         : 0;
 
       // Smooth the movement so it feels liquid instead of jittery.
