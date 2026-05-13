@@ -4,10 +4,15 @@ import bunnyGirl from "../assets/audio/BunnyGirl.mp4";
 import bunnyGirlCover from "../assets/images/BunnyGirlCover.jpg";
 import bunnySprite from "../assets/images/BunnyGirl_Animation.png";
 
+type MusicPlayerProps = {
+  onAudioLevelChange?: (level: number) => void;
+  onPlayStateChange?: (isPlaying: boolean) => void;
+};
+
 const formatTime = (time: number) =>
   new Date((time || 0) * 1000).toISOString().substr(14, 5);
 
-function MusicPlayer() {
+function MusicPlayer({ onAudioLevelChange, onPlayStateChange }: MusicPlayerProps) {
   type BunnyState = "idle" | "transition" | "running";
   const [bunnyState, setBunnyState] = useState<BunnyState>("idle");
   const bunnyTimerRef = useRef<number | null>(null);

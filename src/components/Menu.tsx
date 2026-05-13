@@ -32,7 +32,10 @@ function Menu() {
                         showPlayer ? "show-player" : ""
                         }`}
                     >
-                        <MusicPlayer />
+                        <MusicPlayer 
+                            onAudioLevelChange={setAudioLevel}
+                            onPlayStateChange={setIsAudioPlaying}    
+                        />
                     </div>
 
                     <nav className={`menu-content ${isOpen ? 'menu-open' : ''}`}>
