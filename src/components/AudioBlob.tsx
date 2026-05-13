@@ -34,30 +34,37 @@ function AudioBlob({ level, isPlaying }: AudioBlobProps) {
     }
 
     function createBlobPath(power: number, time: number, isActive: boolean) {
-      const points = 32;
+      const points = 36;
       const centerX = 100;
       const centerY = 100;
-      const baseRadius = 56;
+      const baseRadius = 54;
 
-      // Small movement when active, stronger movement when the music level rises.
-      const baseWobble = isActive ? 2 : 0.5;
-      const reactiveWobble = baseWobble + power * 18;
+      // The blob still has a little life while active,
+      // but most of the movement now comes from the audio power.
+      const idleWobble = isActive ? 1.5 : 0.4;
+      const reactiveWobble = idleWobble + power * 26;
 
-      // How much the whole blob expands from the audio.
-      const audioIntensity = 34;
+      // Bigger number = more burst outward
+      const audioExpansion = power * 28;
+
+      // Power also affects speed so the blob feels more energetic on loud parts
+      const speed = 0.0015 + power * 0.005;
 
       const coordinates = [];
 
       for (let i = 0; i < points; i++) {
         const angle = (i / points) * Math.PI * 2;
 
-        const organicMovement =
-          Math.sin(time * 0.002 + i * 0.7) * reactiveWobble +
-          Math.cos(time * 0.0015 + i * 1.3) * (reactiveWobble * 0.6);
+        const fluidMovement =
+          Math.sin(time * speed + i * 0.85) * reactiveWobble +
+          Math.cos(time * speed * 0.7 + i * 1.7) * (reactiveWobble * 0.55);
 
-        const audioMovement = power * audioIntensity;
+        // Adds smoother local bursts around different parts of the blob
+        const burstMovement =
+          Math.max(0, Math.sin(time * 0.012 + i * 1.9)) * power * 10;
 
-        const radius = baseRadius + organicMovement + audioMovement;
+        const radius =
+          baseRadius + audioExpansion + fluidMovement + burstMovement;
 
         const x = centerX + Math.cos(angle) * radius;
         const y = centerY + Math.sin(angle) * radius;
@@ -87,13 +94,12 @@ function AudioBlob({ level, isPlaying }: AudioBlobProps) {
     function animate(time: number) {
       const isCurrentlyPlaying = isPlayingRef.current;
 
-      // Real audio only. No fakeLevel anymore.
       const targetLevel = isCurrentlyPlaying ? levelRef.current : 0;
 
-      // Fast attack, slow release.
-      // This makes the blob jump with beats but calm down smoothly.
+      // Less smoothing here because MusicPlayer is already smoothing.
+      // This keeps the blob from feeling delayed.
       const smoothingAmount =
-        targetLevel > smoothedLevelRef.current ? 0.35 : 0.08;
+        targetLevel > smoothedLevelRef.current ? 0.85 : 0.12;
 
       smoothedLevelRef.current +=
         (targetLevel - smoothedLevelRef.current) * smoothingAmount;

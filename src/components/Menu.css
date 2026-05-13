@@ -13,16 +13,16 @@
 
 .blob-button-shell {
     position: relative;
-    width: 150px;
-    height: 150px;
+    width: 100px;
+    height: 100px;
+    display: grid;
+    place-items: center;
 }
 
 .audio-blob-svg {
     position: absolute;
-    top: -25px;
-    left: -25px;
-    width: 150px;
-    height: 150px;
+    width: 175px;
+    height: 175px;
     pointer-events: none;
     z-index: 0;
     overflow: visible;

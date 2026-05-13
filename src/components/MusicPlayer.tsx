@@ -26,6 +26,7 @@ function MusicPlayer({ onAudioLevelChange, onPlayStateChange }: MusicPlayerProps
   const animationFrameRef = useRef<number | null>(null);
   const frequencyDataRef = useRef<Uint8Array<ArrayBuffer> | null>(null);
   const smoothedLevelRef = useRef(0);
+  const previousBassLevelRef = useRef(0);
 
   const clearBunnyTimer = () => {
     if (bunnyTimerRef.current) {
@@ -102,7 +103,7 @@ function MusicPlayer({ onAudioLevelChange, onPlayStateChange }: MusicPlayerProps
       const analyser = audioContext.createAnalyser();
 
       analyser.fftSize = 512;
-      analyser.smoothingTimeConstant = 0.35;
+      analyser.smoothingTimeConstant = 0.12;
 
       source.connect(analyser);
       analyser.connect(audioContext.destination);
@@ -138,36 +139,67 @@ function MusicPlayer({ onAudioLevelChange, onPlayStateChange }: MusicPlayerProps
 
       analyser.getByteFrequencyData(frequencyData);
 
-      // Skip index 0 because it can be less useful/noisy.
-      // These early bins represent lower frequencies/bass.
-      const startBin = 2;
-      const endBin = 36;
+      // Bass range: main pulse/body of the song
+      const bassStart = 2;
+      const bassEnd = 28;
 
       let bassTotal = 0;
 
-      for (let i = startBin; i < endBin; i++) {
+      for (let i = bassStart; i < bassEnd; i++) {
         bassTotal += frequencyData[i];
       }
 
-      const bassAverage = bassTotal / (endBin - startBin);
+      const bassAverage = bassTotal / (bassEnd - bassStart);
 
-      // Remove quiet background values so the blob does not always react.
-      const noiseFloor = 20;
+      // Mid range: adds extra movement so it does not only react to bass
+      const midStart = 28;
+      const midEnd = 90;
 
-      const normalizedBass = Math.max(
+      let midTotal = 0;
+
+      for (let i = midStart; i < midEnd; i++) {
+        midTotal += frequencyData[i];
+      }
+
+      const midAverage = midTotal / (midEnd - midStart);
+
+      // Normalize values to 0–1
+      const noiseFloor = 18;
+
+      const bassLevel = Math.max(
         0,
         (bassAverage - noiseFloor) / (255 - noiseFloor)
       );
 
-      // Boost the reaction so it is visually noticeable.
-      const boostedLevel = Math.min(1, normalizedBass * 3.2);
+      const midLevel = Math.max(
+        0,
+        (midAverage - noiseFloor) / (255 - noiseFloor)
+      );
 
-      // Fast attack, slower release.
+      // Detect sudden bass increases.
+      // This creates the "bursty" feeling.
+      const bassJump = Math.max(0, bassLevel - previousBassLevelRef.current);
+      previousBassLevelRef.current = bassLevel;
+
+      const burst = Math.min(1, bassJump * 7);
+
+      // Shape the response:
+      // bass = pulse
+      // mids = fluid detail
+      // burst = quick punch
+      const targetLevel = Math.min(
+        1,
+        bassLevel * 1.4 + midLevel * 0.35 + burst * 1.2
+      );
+
+      // Fast attack, smoother release.
+      // Higher attack = reacts faster to beats.
+      // Lower release = relaxes more fluidly.
       const smoothingAmount =
-        boostedLevel > smoothedLevelRef.current ? 0.32 : 0.1;
+        targetLevel > smoothedLevelRef.current ? 0.75 : 0.16;
 
       smoothedLevelRef.current +=
-        (boostedLevel - smoothedLevelRef.current) * smoothingAmount;
+        (targetLevel - smoothedLevelRef.current) * smoothingAmount;
 
       onAudioLevelChange?.(smoothedLevelRef.current);
 
