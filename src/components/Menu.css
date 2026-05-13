@@ -20,16 +20,38 @@
 }
 
 .audio-blob-svg {
+    --blob-scale: 1;
+    --blob-glow-opacity: 0.28;
+    --blob-edge-opacity: 0.28;
+
     position: absolute;
-    width: 175px;
-    height: 175px;
+    width: 190px;
+    height: 190px;
     pointer-events: none;
     z-index: 0;
     overflow: visible;
+    transform: scale(var(--blob-scale));
+    transform-origin: center;
+    will-change: transform;
 }
 
-.audio-blob-path {
-    fill: rgba(52, 152, 219, 0.45);
+.audio-blob-glow {
+    fill: rgba(52, 152, 219, 0.24);
+    opacity: var(--blob-glow-opacity);
+    filter: blur(8px);
+    transform: scale(1.08);
+    transform-origin: center;
+}
+
+.audio-blob-fill {
+    fill: rgba(52, 152, 219, 0.36);
+}
+
+.audio-blob-edge {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.7);
+    stroke-width: 1.4px;
+    opacity: var(--blob-edge-opacity);
 }
 
 .circle {

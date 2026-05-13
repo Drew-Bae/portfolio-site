@@ -2,12 +2,14 @@ import { useState } from "react";
 import MusicPlayer from "./MusicPlayer";
 import "./Menu.css";
 import AudioBlob from "./AudioBlob";
+import { SILENT_AUDIO_METRICS } from "./audioTypes";
+import type { AudioMetrics } from "./audioTypes";
 
 function Menu() {
   const [isOpen, setIsOpen] = useState(false);
   const [showPlayer, setShowPlayer] = useState(false);
 
-  const [audioLevel, setAudioLevel] = useState(0);
+  const [audioMetrics, setAudioMetrics] = useState<AudioMetrics>(SILENT_AUDIO_METRICS);
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
 
   return (
@@ -19,7 +21,7 @@ function Menu() {
       >
         <div className={`button-stack ${isOpen ? "button-stack-open" : ""}`}>
           <div className="blob-button-shell">
-            <AudioBlob level={audioLevel} isPlaying={isAudioPlaying} />
+            <AudioBlob metrics={audioMetrics} isPlaying={isAudioPlaying} />
 
             <button className="circle" onClick={() => setIsOpen(!isOpen)}>
               DB
@@ -28,7 +30,7 @@ function Menu() {
 
           <div className={`music-player-wrapper ${showPlayer ? "show-player" : ""}`}>
             <MusicPlayer
-              onAudioLevelChange={setAudioLevel}
+              onAudioMetricsChange={setAudioMetrics}
               onPlayStateChange={setIsAudioPlaying}
             />
           </div>

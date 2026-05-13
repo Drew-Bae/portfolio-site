@@ -3,16 +3,65 @@ import "./MusicPlayer.css";
 import bunnyGirl from "../assets/audio/BunnyGirl.mp4";
 import bunnyGirlCover from "../assets/images/BunnyGirlCover.jpg";
 import bunnySprite from "../assets/images/BunnyGirl_Animation.png";
+import { SILENT_AUDIO_METRICS } from "./audioTypes";
+import type { AudioMetrics } from "./audioTypes";
 
 type MusicPlayerProps = {
-  onAudioLevelChange?: (level: number) => void;
+  onAudioMetricsChange?: (metrics: AudioMetrics) => void;
   onPlayStateChange?: (isPlaying: boolean) => void;
 };
 
 const formatTime = (time: number) =>
   new Date((time || 0) * 1000).toISOString().substr(14, 5);
 
-function MusicPlayer({ onAudioLevelChange, onPlayStateChange }: MusicPlayerProps) {
+const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
+
+function smoothMetric(current: number, target: number, attack: number, release: number) {
+  const amount = target > current ? attack : release;
+  return current + (target - current) * amount;
+}
+
+function averageFrequencyRange(
+  frequencyData: Uint8Array<ArrayBuffer>,
+  analyser: AnalyserNode,
+  sampleRate: number,
+  startFrequency: number,
+  endFrequency: number
+) {
+  const hzPerBin = sampleRate / analyser.fftSize;
+  const startBin = Math.max(0, Math.floor(startFrequency / hzPerBin));
+  const endBin = Math.min(
+    frequencyData.length - 1,
+    Math.max(startBin + 1, Math.ceil(endFrequency / hzPerBin))
+  );
+
+  let total = 0;
+  let bins = 0;
+
+  for (let i = startBin; i <= endBin; i++) {
+    total += frequencyData[i];
+    bins++;
+  }
+
+  return bins ? total / bins : 0;
+}
+
+function normalizeFrequencyValue(value: number, noiseFloor: number, ceiling: number) {
+  return clamp01((value - noiseFloor) / (ceiling - noiseFloor));
+}
+
+function getRmsVolume(timeData: Uint8Array<ArrayBuffer>) {
+  let sum = 0;
+
+  for (let i = 0; i < timeData.length; i++) {
+    const centeredSample = (timeData[i] - 128) / 128;
+    sum += centeredSample * centeredSample;
+  }
+
+  return clamp01(Math.sqrt(sum / timeData.length) * 3.1);
+}
+
+function MusicPlayer({ onAudioMetricsChange, onPlayStateChange }: MusicPlayerProps) {
   type BunnyState = "idle" | "transition" | "running";
   const [bunnyState, setBunnyState] = useState<BunnyState>("idle");
   const bunnyTimerRef = useRef<number | null>(null);
@@ -25,8 +74,12 @@ function MusicPlayer({ onAudioLevelChange, onPlayStateChange }: MusicPlayerProps
   const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
   const animationFrameRef = useRef<number | null>(null);
   const frequencyDataRef = useRef<Uint8Array<ArrayBuffer> | null>(null);
-  const smoothedLevelRef = useRef(0);
+  const timeDataRef = useRef<Uint8Array<ArrayBuffer> | null>(null);
+  const smoothedMetricsRef = useRef<AudioMetrics>({ ...SILENT_AUDIO_METRICS });
+  const bassFastRef = useRef(0);
+  const bassSlowRef = useRef(0);
   const previousBassLevelRef = useRef(0);
+  const beatHoldRef = useRef(0);
 
   const clearBunnyTimer = () => {
     if (bunnyTimerRef.current) {
@@ -102,8 +155,8 @@ function MusicPlayer({ onAudioLevelChange, onPlayStateChange }: MusicPlayerProps
       const source = audioContext.createMediaElementSource(audio);
       const analyser = audioContext.createAnalyser();
 
-      analyser.fftSize = 512;
-      analyser.smoothingTimeConstant = 0.12;
+      analyser.fftSize = 2048;
+      analyser.smoothingTimeConstant = 0.58;
 
       source.connect(analyser);
       analyser.connect(audioContext.destination);
@@ -111,9 +164,18 @@ function MusicPlayer({ onAudioLevelChange, onPlayStateChange }: MusicPlayerProps
       sourceRef.current = source;
       analyserRef.current = analyser;
       frequencyDataRef.current = new Uint8Array(analyser.frequencyBinCount);
+      timeDataRef.current = new Uint8Array(analyser.fftSize);
     }
 
     return true;
+  };
+
+  const resetAudioAnalysisState = () => {
+    smoothedMetricsRef.current = { ...SILENT_AUDIO_METRICS };
+    bassFastRef.current = 0;
+    bassSlowRef.current = 0;
+    previousBassLevelRef.current = 0;
+    beatHoldRef.current = 0;
   };
 
   const stopAudioAnalysis = () => {
@@ -122,8 +184,8 @@ function MusicPlayer({ onAudioLevelChange, onPlayStateChange }: MusicPlayerProps
       animationFrameRef.current = null;
     }
 
-    smoothedLevelRef.current = 0;
-    onAudioLevelChange?.(0);
+    resetAudioAnalysisState();
+    onAudioMetricsChange?.(SILENT_AUDIO_METRICS);
   };
 
   const startAudioAnalysis = () => {
@@ -134,74 +196,63 @@ function MusicPlayer({ onAudioLevelChange, onPlayStateChange }: MusicPlayerProps
     const analyze = () => {
       const analyser = analyserRef.current;
       const frequencyData = frequencyDataRef.current;
+      const timeData = timeDataRef.current;
+      const audioContext = audioContextRef.current;
 
-      if (!analyser || !frequencyData) return;
+      if (!analyser || !frequencyData || !timeData || !audioContext) return;
 
       analyser.getByteFrequencyData(frequencyData);
+      analyser.getByteTimeDomainData(timeData);
 
-      // Bass range: main pulse/body of the song
-      const bassStart = 2;
-      const bassEnd = 28;
-
-      let bassTotal = 0;
-
-      for (let i = bassStart; i < bassEnd; i++) {
-        bassTotal += frequencyData[i];
-      }
-
-      const bassAverage = bassTotal / (bassEnd - bassStart);
-
-      // Mid range: adds extra movement so it does not only react to bass
-      const midStart = 28;
-      const midEnd = 90;
-
-      let midTotal = 0;
-
-      for (let i = midStart; i < midEnd; i++) {
-        midTotal += frequencyData[i];
-      }
-
-      const midAverage = midTotal / (midEnd - midStart);
-
-      // Normalize values to 0–1
-      const noiseFloor = 18;
-
-      const bassLevel = Math.max(
-        0,
-        (bassAverage - noiseFloor) / (255 - noiseFloor)
+      const bassAverage = averageFrequencyRange(
+        frequencyData,
+        analyser,
+        audioContext.sampleRate,
+        35,
+        180
+      );
+      const midAverage = averageFrequencyRange(
+        frequencyData,
+        analyser,
+        audioContext.sampleRate,
+        180,
+        2400
+      );
+      const trebleAverage = averageFrequencyRange(
+        frequencyData,
+        analyser,
+        audioContext.sampleRate,
+        2400,
+        10000
       );
 
-      const midLevel = Math.max(
-        0,
-        (midAverage - noiseFloor) / (255 - noiseFloor)
-      );
+      const bassLevel = normalizeFrequencyValue(bassAverage, 18, 220);
+      const midLevel = normalizeFrequencyValue(midAverage, 16, 205);
+      const trebleLevel = normalizeFrequencyValue(trebleAverage, 14, 185);
+      const volumeLevel = getRmsVolume(timeData);
 
-      // Detect sudden bass increases.
-      // This creates the "bursty" feeling.
+      bassFastRef.current += (bassLevel - bassFastRef.current) * 0.5;
+      bassSlowRef.current += (bassLevel - bassSlowRef.current) * 0.055;
+
+      const bassLift = Math.max(0, bassFastRef.current - bassSlowRef.current);
       const bassJump = Math.max(0, bassLevel - previousBassLevelRef.current);
-      previousBassLevelRef.current = bassLevel;
+      previousBassLevelRef.current =
+        previousBassLevelRef.current * 0.35 + bassLevel * 0.65;
 
-      const burst = Math.min(1, bassJump * 7);
+      const beatImpulse = clamp01(bassLift * 4.2 + bassJump * 2.6 - 0.08);
+      beatHoldRef.current = Math.max(beatImpulse, beatHoldRef.current * 0.76);
 
-      // Shape the response:
-      // bass = pulse
-      // mids = fluid detail
-      // burst = quick punch
-      const targetLevel = Math.min(
-        1,
-        bassLevel * 1.4 + midLevel * 0.35 + burst * 1.2
-      );
+      const current = smoothedMetricsRef.current;
+      const nextMetrics: AudioMetrics = {
+        volume: smoothMetric(current.volume, volumeLevel, 0.44, 0.18),
+        bass: smoothMetric(current.bass, bassLevel, 0.58, 0.2),
+        mid: smoothMetric(current.mid, midLevel, 0.32, 0.16),
+        treble: smoothMetric(current.treble, trebleLevel, 0.38, 0.18),
+        beat: Math.max(beatHoldRef.current, current.beat * 0.72),
+      };
 
-      // Fast attack, smoother release.
-      // Higher attack = reacts faster to beats.
-      // Lower release = relaxes more fluidly.
-      const smoothingAmount =
-        targetLevel > smoothedLevelRef.current ? 0.75 : 0.16;
-
-      smoothedLevelRef.current +=
-        (targetLevel - smoothedLevelRef.current) * smoothingAmount;
-
-      onAudioLevelChange?.(smoothedLevelRef.current);
+      smoothedMetricsRef.current = nextMetrics;
+      onAudioMetricsChange?.(nextMetrics);
 
       animationFrameRef.current = requestAnimationFrame(analyze);
     };
