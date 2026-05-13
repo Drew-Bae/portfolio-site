@@ -156,7 +156,7 @@ function MusicPlayer({ onAudioMetricsChange, onPlayStateChange }: MusicPlayerPro
       const analyser = audioContext.createAnalyser();
 
       analyser.fftSize = 2048;
-      analyser.smoothingTimeConstant = 0.58;
+      analyser.smoothingTimeConstant = 0.34;
 
       source.connect(analyser);
       analyser.connect(audioContext.destination);
@@ -204,18 +204,25 @@ function MusicPlayer({ onAudioMetricsChange, onPlayStateChange }: MusicPlayerPro
       analyser.getByteFrequencyData(frequencyData);
       analyser.getByteTimeDomainData(timeData);
 
-      const bassAverage = averageFrequencyRange(
+      const subBassAverage = averageFrequencyRange(
         frequencyData,
         analyser,
         audioContext.sampleRate,
         35,
-        180
+        70
+      );
+      const kickAverage = averageFrequencyRange(
+        frequencyData,
+        analyser,
+        audioContext.sampleRate,
+        70,
+        165
       );
       const midAverage = averageFrequencyRange(
         frequencyData,
         analyser,
         audioContext.sampleRate,
-        180,
+        165,
         2400
       );
       const trebleAverage = averageFrequencyRange(
@@ -223,32 +230,33 @@ function MusicPlayer({ onAudioMetricsChange, onPlayStateChange }: MusicPlayerPro
         analyser,
         audioContext.sampleRate,
         2400,
-        10000
+        10500
       );
 
-      const bassLevel = normalizeFrequencyValue(bassAverage, 18, 220);
-      const midLevel = normalizeFrequencyValue(midAverage, 16, 205);
-      const trebleLevel = normalizeFrequencyValue(trebleAverage, 14, 185);
+      const bassAverage = subBassAverage * 0.35 + kickAverage * 0.65;
+      const bassLevel = normalizeFrequencyValue(bassAverage, 16, 210);
+      const midLevel = normalizeFrequencyValue(midAverage, 15, 205);
+      const trebleLevel = normalizeFrequencyValue(trebleAverage, 12, 175);
       const volumeLevel = getRmsVolume(timeData);
 
-      bassFastRef.current += (bassLevel - bassFastRef.current) * 0.5;
-      bassSlowRef.current += (bassLevel - bassSlowRef.current) * 0.055;
+      bassFastRef.current += (bassLevel - bassFastRef.current) * 0.64;
+      bassSlowRef.current += (bassLevel - bassSlowRef.current) * 0.045;
 
       const bassLift = Math.max(0, bassFastRef.current - bassSlowRef.current);
       const bassJump = Math.max(0, bassLevel - previousBassLevelRef.current);
       previousBassLevelRef.current =
-        previousBassLevelRef.current * 0.35 + bassLevel * 0.65;
+        previousBassLevelRef.current * 0.25 + bassLevel * 0.75;
 
-      const beatImpulse = clamp01(bassLift * 4.2 + bassJump * 2.6 - 0.08);
-      beatHoldRef.current = Math.max(beatImpulse, beatHoldRef.current * 0.76);
+      const beatImpulse = clamp01(bassLift * 5.5 + bassJump * 3.2 - 0.1);
+      beatHoldRef.current = Math.max(beatImpulse, beatHoldRef.current * 0.68);
 
       const current = smoothedMetricsRef.current;
       const nextMetrics: AudioMetrics = {
-        volume: smoothMetric(current.volume, volumeLevel, 0.44, 0.18),
-        bass: smoothMetric(current.bass, bassLevel, 0.58, 0.2),
-        mid: smoothMetric(current.mid, midLevel, 0.32, 0.16),
-        treble: smoothMetric(current.treble, trebleLevel, 0.38, 0.18),
-        beat: Math.max(beatHoldRef.current, current.beat * 0.72),
+        volume: smoothMetric(current.volume, volumeLevel, 0.52, 0.16),
+        bass: smoothMetric(current.bass, bassLevel, 0.62, 0.18),
+        mid: smoothMetric(current.mid, midLevel, 0.34, 0.15),
+        treble: smoothMetric(current.treble, trebleLevel, 0.4, 0.18),
+        beat: Math.max(beatHoldRef.current, current.beat * 0.64),
       };
 
       smoothedMetricsRef.current = nextMetrics;
