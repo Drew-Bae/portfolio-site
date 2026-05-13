@@ -23,21 +23,28 @@ function AudioBlob({ level, isPlaying }: AudioBlobProps) {
   }, [isPlaying]);
 
   useEffect(() => {
-    function getMidPoint(pointA: { x: number; y: number }, pointB: { x: number; y: number }) {
+    function getMidPoint(
+      pointA: { x: number; y: number },
+      pointB: { x: number; y: number }
+    ) {
       return {
         x: (pointA.x + pointB.x) / 2,
         y: (pointA.y + pointB.y) / 2,
       };
     }
 
-    function createBlobPath(power: number, time: number) {
+    function createBlobPath(power: number, time: number, isActive: boolean) {
       const points = 32;
       const centerX = 100;
       const centerY = 100;
-      const baseRadius = 58;
+      const baseRadius = 56;
 
-      const wobbleAmount = 7;
-      const audioIntensity = 22;
+      // Small movement when active, stronger movement when the music level rises.
+      const baseWobble = isActive ? 2 : 0.5;
+      const reactiveWobble = baseWobble + power * 18;
+
+      // How much the whole blob expands from the audio.
+      const audioIntensity = 34;
 
       const coordinates = [];
 
@@ -45,8 +52,8 @@ function AudioBlob({ level, isPlaying }: AudioBlobProps) {
         const angle = (i / points) * Math.PI * 2;
 
         const organicMovement =
-          Math.sin(time * 0.002 + i * 0.7) * wobbleAmount +
-          Math.cos(time * 0.0015 + i * 1.3) * (wobbleAmount * 0.6);
+          Math.sin(time * 0.002 + i * 0.7) * reactiveWobble +
+          Math.cos(time * 0.0015 + i * 1.3) * (reactiveWobble * 0.6);
 
         const audioMovement = power * audioIntensity;
 
@@ -80,23 +87,22 @@ function AudioBlob({ level, isPlaying }: AudioBlobProps) {
     function animate(time: number) {
       const isCurrentlyPlaying = isPlayingRef.current;
 
-      // Fake audio pulse for now.
-      // This gives you a changing number between 0 and 1.
-      const fakeLevel = isCurrentlyPlaying
-        ? (Math.sin(time * 0.004) + 1) / 2
-        : 0;
+      // Real audio only. No fakeLevel anymore.
+      const targetLevel = isCurrentlyPlaying ? levelRef.current : 0;
 
-      // Later, real audio will come from the `level` prop.
-      // For now, this lets the blob move even when level is 0.
-      const targetLevel = isCurrentlyPlaying
-        ? Math.max(levelRef.current, fakeLevel * 0.12)
-        : 0;
+      // Fast attack, slow release.
+      // This makes the blob jump with beats but calm down smoothly.
+      const smoothingAmount =
+        targetLevel > smoothedLevelRef.current ? 0.35 : 0.08;
 
-      // Smooth the movement so it feels liquid instead of jittery.
       smoothedLevelRef.current +=
-        (targetLevel - smoothedLevelRef.current) * 0.08;
+        (targetLevel - smoothedLevelRef.current) * smoothingAmount;
 
-      const newPath = createBlobPath(smoothedLevelRef.current, time);
+      const newPath = createBlobPath(
+        smoothedLevelRef.current,
+        time,
+        isCurrentlyPlaying
+      );
 
       if (pathRef.current) {
         pathRef.current.setAttribute("d", newPath);

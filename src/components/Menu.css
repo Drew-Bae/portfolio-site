@@ -21,7 +21,6 @@
     position: absolute;
     top: -25px;
     left: -25px;
-    background-color: pink;
     width: 150px;
     height: 150px;
     pointer-events: none;
@@ -30,7 +29,7 @@
 }
 
 .audio-blob-path {
-    fill: #3498db;
+    fill: rgba(52, 152, 219, 0.45);
 }
 
 .circle {

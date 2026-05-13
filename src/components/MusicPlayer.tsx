@@ -101,8 +101,8 @@ function MusicPlayer({ onAudioLevelChange, onPlayStateChange }: MusicPlayerProps
       const source = audioContext.createMediaElementSource(audio);
       const analyser = audioContext.createAnalyser();
 
-      analyser.fftSize = 256;
-      analyser.smoothingTimeConstant = 0.75;
+      analyser.fftSize = 512;
+      analyser.smoothingTimeConstant = 0.35;
 
       source.connect(analyser);
       analyser.connect(audioContext.destination);
@@ -138,14 +138,36 @@ function MusicPlayer({ onAudioLevelChange, onPlayStateChange }: MusicPlayerProps
 
       analyser.getByteFrequencyData(frequencyData);
 
-      const bassRange = frequencyData.slice(0, 16);
-      const bassAverage =
-        bassRange.reduce((total, value) => total + value, 0) / bassRange.length;
+      // Skip index 0 because it can be less useful/noisy.
+      // These early bins represent lower frequencies/bass.
+      const startBin = 2;
+      const endBin = 36;
 
-      const targetLevel = bassAverage / 255;
+      let bassTotal = 0;
+
+      for (let i = startBin; i < endBin; i++) {
+        bassTotal += frequencyData[i];
+      }
+
+      const bassAverage = bassTotal / (endBin - startBin);
+
+      // Remove quiet background values so the blob does not always react.
+      const noiseFloor = 20;
+
+      const normalizedBass = Math.max(
+        0,
+        (bassAverage - noiseFloor) / (255 - noiseFloor)
+      );
+
+      // Boost the reaction so it is visually noticeable.
+      const boostedLevel = Math.min(1, normalizedBass * 3.2);
+
+      // Fast attack, slower release.
+      const smoothingAmount =
+        boostedLevel > smoothedLevelRef.current ? 0.32 : 0.1;
 
       smoothedLevelRef.current +=
-        (targetLevel - smoothedLevelRef.current) * 0.12;
+        (boostedLevel - smoothedLevelRef.current) * smoothingAmount;
 
       onAudioLevelChange?.(smoothedLevelRef.current);
 
