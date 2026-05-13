@@ -141,6 +141,7 @@ function AudioBlob({ metrics, isPlaying }: AudioBlobProps) {
   const glowPathRef = useRef<SVGPathElement | null>(null);
   const fillPathRef = useRef<SVGPathElement | null>(null);
   const edgePathRef = useRef<SVGPathElement | null>(null);
+  const speakerRingRef = useRef<SVGCircleElement | null>(null);
   const pulseRingRef = useRef<SVGCircleElement | null>(null);
   const animationFrameRef = useRef<number | null>(null);
 
@@ -183,8 +184,8 @@ function AudioBlob({ metrics, isPlaying }: AudioBlobProps) {
       const risingBeat = Math.max(0, nextMetrics.beat - previousBeatRef.current);
       previousBeatRef.current = nextMetrics.beat;
       beatFlashRef.current = Math.max(
-        beatFlashRef.current * 0.82,
-        nextMetrics.beat * 0.48 + risingBeat * 1.4
+        beatFlashRef.current * 0.88,
+        nextMetrics.beat * 0.52 + risingBeat * 1.45
       );
       beatFlashRef.current = clamp01(beatFlashRef.current);
 
@@ -199,10 +200,12 @@ function AudioBlob({ metrics, isPlaying }: AudioBlobProps) {
         const beatFlash = beatFlashRef.current;
         const rootScale = 1 + nextMetrics.bass * 0.025 + beatFlash * 0.035;
         const haloScale = 1 + nextMetrics.volume * 0.08 + nextMetrics.bass * 0.11 + beatFlash * 0.14;
-        const ringScale = 1.08 + beatFlash * 0.34 + nextMetrics.bass * 0.08;
+        const speakerRingScale = 1.02 + nextMetrics.volume * 0.025 + nextMetrics.bass * 0.055;
+        const ringScale = 1.07 + beatFlash * 0.3 + nextMetrics.bass * 0.07;
 
         svgRef.current.style.setProperty("--blob-scale", rootScale.toFixed(3));
         svgRef.current.style.setProperty("--blob-halo-scale", haloScale.toFixed(3));
+        svgRef.current.style.setProperty("--blob-speaker-ring-scale", speakerRingScale.toFixed(3));
         svgRef.current.style.setProperty("--blob-ring-scale", ringScale.toFixed(3));
         svgRef.current.style.setProperty(
           "--blob-glow-opacity",
@@ -217,13 +220,24 @@ function AudioBlob({ metrics, isPlaying }: AudioBlobProps) {
           (0.2 + nextMetrics.treble * 0.2 + beatFlash * 0.28).toFixed(3)
         );
         svgRef.current.style.setProperty(
+          "--blob-speaker-ring-opacity",
+          (isCurrentlyPlaying
+            ? 0.095 + nextMetrics.volume * 0.055 + nextMetrics.bass * 0.11 + beatFlash * 0.09
+            : 0.018
+          ).toFixed(3)
+        );
+        svgRef.current.style.setProperty(
           "--blob-ring-opacity",
-          (beatFlash * 0.34 + nextMetrics.beat * 0.12).toFixed(3)
+          (beatFlash * 0.36 + nextMetrics.beat * 0.14 + (isCurrentlyPlaying ? nextMetrics.bass * 0.035 : 0)).toFixed(3)
         );
       }
 
       if (haloRef.current) {
         haloRef.current.setAttribute("r", String(OUTER_RADIUS));
+      }
+
+      if (speakerRingRef.current) {
+        speakerRingRef.current.setAttribute("r", String(OUTER_RADIUS + 2));
       }
 
       if (pulseRingRef.current) {
@@ -248,6 +262,7 @@ function AudioBlob({ metrics, isPlaying }: AudioBlobProps) {
       <path ref={glowPathRef} className="audio-blob-glow" />
       <path ref={fillPathRef} className="audio-blob-fill" />
       <path ref={edgePathRef} className="audio-blob-edge" />
+      <circle ref={speakerRingRef} className="audio-blob-speaker-ring" cx="100" cy="100" r={OUTER_RADIUS + 2} />
       <circle ref={pulseRingRef} className="audio-blob-pulse-ring" cx="100" cy="100" r={OUTER_RADIUS + 5} />
     </svg>
   );

@@ -22,10 +22,12 @@
 .audio-blob-svg {
     --blob-scale: 1;
     --blob-halo-scale: 1;
+    --blob-speaker-ring-scale: 1;
     --blob-ring-scale: 1;
     --blob-glow-opacity: 0.24;
     --blob-fill-opacity: 0.13;
     --blob-edge-opacity: 0.24;
+    --blob-speaker-ring-opacity: 0.02;
     --blob-ring-opacity: 0;
 
     position: absolute;
@@ -72,10 +74,21 @@
     will-change: opacity;
 }
 
+.audio-blob-speaker-ring {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.72);
+    stroke-width: 1.15px;
+    opacity: var(--blob-speaker-ring-opacity);
+    filter: drop-shadow(0 0 4px rgba(52, 152, 219, 0.32));
+    transform: scale(var(--blob-speaker-ring-scale));
+    transform-origin: center;
+    will-change: transform, opacity;
+}
+
 .audio-blob-pulse-ring {
     fill: none;
     stroke: rgba(52, 152, 219, 0.68);
-    stroke-width: 1.6px;
+    stroke-width: 1.45px;
     opacity: var(--blob-ring-opacity);
     filter: blur(0.35px);
     transform: scale(var(--blob-ring-scale));
