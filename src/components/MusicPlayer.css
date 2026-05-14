@@ -152,7 +152,7 @@
   left: 0;
   width: var(--progress);
   height: 2px;
-  background-color: #007db5;
+  background-color: #d75913;
   transform: translateY(-50%);
   cursor: pointer;
 }
