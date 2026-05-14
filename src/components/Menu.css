@@ -4,6 +4,11 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    --music-accent: #d75913;
+    --music-accent-rgb: 215, 89, 19;
+    --music-accent-glow-rgb: 255, 137, 66;
+    --music-accent-soft-rgb: 255, 222, 200;
+
     padding: 20px;
     background-color: #f0f0f0;
     border-radius: 8px;
@@ -42,7 +47,7 @@
 }
 
 .audio-blob-halo {
-    fill: rgba(52, 152, 219, 0.24);
+    fill: rgba(var(--music-accent-rgb), 0.24);
     filter: blur(16px);
     opacity: var(--blob-glow-opacity);
     transform: scale(var(--blob-halo-scale));
@@ -51,7 +56,7 @@
 }
 
 .audio-blob-glow {
-    fill: rgba(52, 152, 219, 0.26);
+    fill: rgba(var(--music-accent-glow-rgb), 0.26);
     opacity: var(--blob-glow-opacity);
     filter: blur(10px);
     transform: scale(1.06);
@@ -60,26 +65,26 @@
 }
 
 .audio-blob-fill {
-    fill: rgba(52, 152, 219, 0.82);
+    fill: rgba(var(--music-accent-rgb), 0.82);
     opacity: var(--blob-fill-opacity);
     will-change: opacity;
 }
 
 .audio-blob-edge {
     fill: none;
-    stroke: rgba(255, 255, 255, 0.68);
+    stroke: rgba(var(--music-accent-soft-rgb), 0.78);
     stroke-width: 1.15px;
     opacity: var(--blob-edge-opacity);
-    filter: drop-shadow(0 0 4px rgba(52, 152, 219, 0.35));
+    filter: drop-shadow(0 0 4px rgba(var(--music-accent-rgb), 0.38));
     will-change: opacity;
 }
 
 .audio-blob-speaker-ring {
     fill: none;
-    stroke: rgba(255, 255, 255, 0.72);
+    stroke: rgba(var(--music-accent-soft-rgb), 0.8);
     stroke-width: 1.15px;
     opacity: var(--blob-speaker-ring-opacity);
-    filter: drop-shadow(0 0 4px rgba(52, 152, 219, 0.32));
+    filter: drop-shadow(0 0 4px rgba(var(--music-accent-rgb), 0.36));
     transform: scale(var(--blob-speaker-ring-scale));
     transform-origin: center;
     will-change: transform, opacity;
@@ -87,7 +92,7 @@
 
 .audio-blob-pulse-ring {
     fill: none;
-    stroke: rgba(52, 152, 219, 0.68);
+    stroke: rgba(var(--music-accent-rgb), 0.68);
     stroke-width: 1.45px;
     opacity: var(--blob-ring-opacity);
     filter: blur(0.35px);
@@ -102,7 +107,7 @@
     height: 100px;
     border: none;
     border-radius: 50%;
-    background-color: #d75913;
+    background-color: var(--music-accent);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -111,7 +116,7 @@
     transition: transform 0.6s ease, box-shadow 0.4s ease;
     cursor: pointer;
     z-index: 1;
-    box-shadow: 0 12px 28px rgba(52, 152, 219, 0.24);
+    box-shadow: 0 12px 28px rgba(var(--music-accent-rgb), 0.24);
 }
 
 .button-stack {

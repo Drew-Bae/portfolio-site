@@ -95,17 +95,34 @@
   position: relative;
   -webkit-appearance: none;
   appearance: none;
+  background: transparent;
 }
 
 .seek-slider {
+  --seek-track-height: 2px;
+  --seek-hit-area: 44px;
+
+  position: absolute;
+  top: 1px;
+  left: 0;
   display: block;
   width: 100%;
+  height: var(--seek-hit-area);
   margin: 0;
+  cursor: grab;
+  touch-action: none;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+
+.seek-slider:active {
+  cursor: grabbing;
 }
 
 .slider-wrapper {
   position: relative;
   width: 300px;
+  height: 16px;
 }
 
 .duration {
@@ -113,14 +130,19 @@
   right: -15px;
   top: -21px;
   font-size: 12px;
+  pointer-events: none;
 }
 
 /* Track Design */
 .slider::-webkit-slider-runnable-track {
   width: 100%;
-  height: 2px;
-  cursor: pointer;
+  height: var(--seek-track-height);
+  cursor: grab;
   background: white;
+}
+
+.seek-slider:active::-webkit-slider-runnable-track {
+  cursor: grabbing;
 }
 
 .slider-wrapper::before,
@@ -132,7 +154,7 @@
   height: 12px;
   background-color: black;
   transform: translateY(-50%);
-  z-index: 2;
+  z-index: 5;
   pointer-events: none;
 }
 
@@ -148,23 +170,30 @@
 .slider::before {
   position: absolute;
   content: "";
-  top: 1px;
+  top: 50%;
   left: 0;
   width: var(--progress);
-  height: 2px;
-  background-color: #d75913;
+  height: var(--seek-track-height);
+  background-color: var(--music-accent, #d75913);
   transform: translateY(-50%);
-  cursor: pointer;
+  pointer-events: none;
 }
 
-/* The Thumb */
+/* The real range thumb is invisible but intentionally large.
+   This keeps Bunny Girl the same visual size while making her easier to grab. */
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 0;
-  height: 0;
+  width: var(--seek-hit-area);
+  height: var(--seek-hit-area);
+  margin-top: calc((var(--seek-track-height) - var(--seek-hit-area)) / 2);
   border: 0;
   background: transparent;
+  cursor: grab;
+}
+
+.seek-slider:active::-webkit-slider-thumb {
+  cursor: grabbing;
 }
 
 .bunny-thumb {
@@ -181,8 +210,12 @@
   background-size: calc(var(--frame-width) * 6) var(--frame-height);
   transform: translate(-50%, -50%);
   pointer-events: none;
-  z-index: 3;
+  z-index: 4;
   image-rendering: pixelated;
+}
+
+.slider-wrapper:hover .bunny-thumb {
+  filter: drop-shadow(0 0 4px rgba(var(--music-accent-rgb, 215, 89, 19), 0.45));
 }
 
 /* Frame */
@@ -209,20 +242,19 @@
 
 /* Thumb Pressed */
 input[type="range"]:active::-webkit-slider-thumb {
-  transform: scale(1.2);
-  background: #007db5;
+  background: transparent;
 }
 
 /* Firefox */
 input[type="range"]::-moz-range-track {
   width: 100%;
-  height: 3px;
-  cursor: pointer;
-  background: linear-gradient(to right, rgba(0, 125, 181, 0.6) var(--buffered-width), rgba(0, 125, 181, 0.2) var(--buffered-width));
+  height: var(--seek-track-height);
+  cursor: grab;
+  background: linear-gradient(to right, rgba(var(--music-accent-rgb, 215, 89, 19), 0.6) var(--buffered-width), rgba(var(--music-accent-rgb, 215, 89, 19), 0.2) var(--buffered-width));
 }
 
 input[type="range"]::-moz-range-progress {
-  background-color: #007db5;
+  background-color: var(--music-accent, #d75913);
 }
 input[type="range"]::-moz-focus-outer {
   border: 0;
@@ -230,40 +262,40 @@ input[type="range"]::-moz-focus-outer {
 input[type="range"]::-moz-range-thumb {
   box-sizing: content-box;
   border: 0;
-  height: 0;
-  width: 0;
+  height: var(--seek-hit-area);
+  width: var(--seek-hit-area);
   background-color: transparent;
-  cursor: pointer;
+  cursor: grab;
 }
 input[type="range"]:active::-moz-range-thumb {
   background: transparent;
+  cursor: grabbing;
 }
 
 /* IE */
 input[type="range"]::-ms-track {
   width: 100%;
-  height: 3px;
-  cursor: pointer;
+  height: var(--seek-track-height);
+  cursor: grab;
   background: transparent;
   border: solid transparent;
   color: transparent;
 }
 input[type="range"]::-ms-fill-lower {
-  background-color: #007db5;
+  background-color: var(--music-accent, #d75913);
 }
 input[type="range"]::-ms-fill-upper {
-  background: linear-gradient(to right, rgba(0, 125, 181, 0.6) var(--buffered-width), rgba(0, 125, 181, 0.2) var(--buffered-width));
+  background: linear-gradient(to right, rgba(var(--music-accent-rgb, 215, 89, 19), 0.6) var(--buffered-width), rgba(var(--music-accent-rgb, 215, 89, 19), 0.2) var(--buffered-width));
 }
 input[type="range"]::-ms-thumb {
   box-sizing: content-box;
-  border: 1px solid #007db5;
-  height: 15px;
-  width: 15px;
-  border-radius: 50%;
-  background-color: #fff;
-  cursor: pointer;
+  border: 0;
+  height: var(--seek-hit-area);
+  width: var(--seek-hit-area);
+  background-color: transparent;
+  cursor: grab;
 }
 input[type="range"]:active::-ms-thumb {
-  transform: scale(1.2);
-  background: #007db5;
+  background: transparent;
+  cursor: grabbing;
 }

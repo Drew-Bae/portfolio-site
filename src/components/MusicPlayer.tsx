@@ -122,13 +122,19 @@ function MusicPlayer({ onAudioMetricsChange, onPlayStateChange }: MusicPlayerPro
     setCurrentTime(audioRef.current.currentTime);
   };
 
-  const handleSeek = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const updateSeekPosition = (newTime: number) => {
     if (!audioRef.current) return;
-
-    const newTime = Number(event.target.value);
 
     audioRef.current.currentTime = newTime;
     setCurrentTime(newTime);
+  };
+
+  const handleSeek = (event: React.ChangeEvent<HTMLInputElement>) => {
+    updateSeekPosition(Number(event.target.value));
+  };
+
+  const handleSeekInput = (event: React.FormEvent<HTMLInputElement>) => {
+    updateSeekPosition(Number(event.currentTarget.value));
   };
 
   const setupAudioAnalyzer = () => {
@@ -320,6 +326,8 @@ function MusicPlayer({ onAudioMetricsChange, onPlayStateChange }: MusicPlayerPro
     };
   }, []);
 
+  const progressPercent = duration ? (currentTime / duration) * 100 : 0;
+
   return (
     <div className="music-player">
       <audio
@@ -356,9 +364,12 @@ function MusicPlayer({ onAudioMetricsChange, onPlayStateChange }: MusicPlayerPro
           max={duration || 0} 
           value={currentTime} 
           onChange={handleSeek}
+          onInput={handleSeekInput}
+          aria-label="Song progress"
+          title="Click or drag to change where you are in the song"
           style={
             {
-              "--progress": `${duration ? (currentTime / duration) * 100 : 0}%`,
+              "--progress": `${progressPercent}%`,
             } as React.CSSProperties
           }
         />
@@ -366,7 +377,7 @@ function MusicPlayer({ onAudioMetricsChange, onPlayStateChange }: MusicPlayerPro
           className={`bunny-thumb bunny-thumb--${bunnyState}`}
           style={
             {
-              "--progress": `${duration ? (currentTime / duration) * 100 : 0}%`,
+              "--progress": `${progressPercent}%`,
               "--bunny-sprite": `url(${bunnySprite})`,
             } as React.CSSProperties
           }
