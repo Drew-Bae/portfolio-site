@@ -1,19 +1,12 @@
 .menu-container {
     display: flex;
-    position: relative;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    position: fixed;
     --music-accent: #d75913;
     --music-accent-rgb: 215, 89, 19;
     --music-accent-glow-rgb: 255, 137, 66;
     --music-accent-soft-rgb: 255, 222, 200;
-
-    padding: 20px;
-    background-color: #f0f0f0;
-    border-radius: 8px;
-    height: 500px;
-    width: 800px;
+    bottom: 100px;
+    right: 150px;
 }
 
 .blob-button-shell {
@@ -141,16 +134,27 @@
     opacity: 0;
     pointer-events: none;
     position: absolute;
-    top: 50%;
-    left: 100%;
-    transform: translateY(-50%) translateX(-10px) scale(0.95);
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(12px) scale(0.95);
+    transform-origin: bottom center;
     transition: opacity 0.6s ease, transform 0.6s ease;
+    z-index: 3;
+}
+
+.music-player-wrapper::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -22px;
+    height: 22px;
 }
 
 .music-player-wrapper.show-player {
     opacity: 1;
     pointer-events: auto;
-    transform: translateY(-50%) translateX(0) scale(1);
+    transform: translateX(-50%) translateY(0) scale(1);
 }
 
 .menu-content {

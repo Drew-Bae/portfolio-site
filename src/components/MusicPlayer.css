@@ -37,7 +37,7 @@
   grid-row: 2;
   font-size: 12px;
   margin: 0;
-  color: #555;
+  color: lightgrey;
 }
 
 /* Controls */
@@ -70,7 +70,7 @@
 
   border-top: 10px solid transparent;
   border-bottom: 10px solid transparent;
-  border-left: 14px solid #000;
+  border-left: 14px solid #EEE;
 }
 
 /* Pause icon */
@@ -87,7 +87,7 @@
   content: "";
   width: 4px;
   height: 20px;
-  background-color: #000;
+  background-color: #EEE;
 }
 
 /* seek slider + volume slider */
@@ -152,9 +152,9 @@
   top: 1px;
   width: 2px;
   height: 12px;
-  background-color: black;
+  background-color: #EEE;
   transform: translateY(-50%);
-  z-index: 5;
+  z-index: 4;
   pointer-events: none;
 }
 
