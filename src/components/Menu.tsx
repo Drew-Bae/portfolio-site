@@ -24,7 +24,7 @@ function Menu() {
             <AudioBlob metrics={audioMetrics} isPlaying={isAudioPlaying} />
 
             <button className="circle" onClick={() => setIsOpen(!isOpen)}>
-              DB
+              menu
             </button>
           </div>
 
