@@ -4,3 +4,568 @@
     background-color: pink;
     border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
 }
+
+.hero {
+    position: relative;
+    min-height: 100vh;
+    min-width: 100vw;
+    overflow: hidden;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: green;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-title {
+    position: relative;
+    display: inline-block;
+
+    margin: 0;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    line-height: 1;
+    color: #fff7f0;
+}
+
+.hero-title-text {
+    position: relative;
+    z-index: 2;
+}
+
+.petal-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.petal-layer-back {
+    z-index: 1;
+}
+
+.petal-layer-front {
+    z-index: 3;
+}
+
+.floating-petal,
+.resting-petal {
+    display: block;
+
+    width: var(--petal-width, 12px);
+    height: var(--petal-height, 18px);
+
+    background: #f7b6c8;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+
+    opacity: var(--petal-opacity, 0.75);
+    pointer-events: none;
+}
+
+.floating-petal {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    animation-name: floating-petal-fall;
+    animation-duration: var(--duration, 18s);
+    animation-delay: var(--delay, 0s);
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+
+    will-change: transform;
+}
+
+@keyframes floating-petal-fall {
+    0% {
+        opacity: 0;
+        transform: 
+            translate3d(var(--start-x, 100vw), -15vh, 0)
+            rotate(0deg);
+    }
+
+    10% {
+        opacity: var(--petal-opacity, 0.75);
+    }
+
+    35% {
+        transform: 
+            translate3d(var(--mid-x-1, 60vw), 60vh, 0)
+            rotate(120deg);
+    }
+
+    65% {
+        transform: 
+            translate3d(var(--mid-x-2, 30vw), 65vh, 0)
+            rotate(240deg);
+    }
+
+    90% {
+        opacity: var(--petal-opacity, 0.75);
+    }
+
+    100% {
+        opacity: 0;
+        transform: 
+            translate3d(var(--end-x, -20vw), 115vh, 0)
+            rotate(var(--end-rotate, 420deg));
+    }
+}
+
+/* Back floating petals */
+.floating-petal-back {
+    --petal-width: 10px;
+    --petal-height: 16px;
+    --petal-opacity: 0.45;
+}
+
+.floating-petal-back-1 {
+    --start-x: 95vw;
+    --mid-x-1: 70vw;
+    --mid-x-2: 35vw;
+    --end-x: -10vw;
+    --duration: 22s;
+    --delay: -2s;
+}
+
+.floating-petal-back-2 {
+    --start-x: 105vw;
+    --mid-x-1: 75vw;
+    --mid-x-2: 42vw;
+    --end-x: -15vw;
+    --duration: 26s;
+    --delay: -7s;
+}
+
+.floating-petal-back-3 {
+  --start-x: 88vw;
+  --mid-x-1: 60vw;
+  --mid-x-2: 25vw;
+  --end-x: -20vw;
+  --duration: 20s;
+  --delay: -11s;
+}
+
+.floating-petal-back-4 {
+  --start-x: 115vw;
+  --mid-x-1: 80vw;
+  --mid-x-2: 45vw;
+  --end-x: -25vw;
+  --duration: 28s;
+  --delay: -4s;
+}
+
+.floating-petal-back-5 {
+  --start-x: 78vw;
+  --mid-x-1: 55vw;
+  --mid-x-2: 22vw;
+  --end-x: -12vw;
+  --duration: 24s;
+  --delay: -14s;
+}
+
+.floating-petal-back-6 {
+  --start-x: 100vw;
+  --mid-x-1: 68vw;
+  --mid-x-2: 32vw;
+  --end-x: -18vw;
+  --duration: 30s;
+  --delay: -9s;
+}
+
+.floating-petal-back-7 {
+  --start-x: 92vw;
+  --mid-x-1: 62vw;
+  --mid-x-2: 28vw;
+  --end-x: -22vw;
+  --duration: 21s;
+  --delay: -17s;
+}
+
+.floating-petal-back-8 {
+  --start-x: 110vw;
+  --mid-x-1: 72vw;
+  --mid-x-2: 38vw;
+  --end-x: -16vw;
+  --duration: 27s;
+  --delay: -6s;
+}
+
+.floating-petal-back-9 {
+  --start-x: 84vw;
+  --mid-x-1: 58vw;
+  --mid-x-2: 24vw;
+  --end-x: -19vw;
+  --duration: 23s;
+  --delay: -13s;
+}
+
+.floating-petal-back-10 {
+  --start-x: 120vw;
+  --mid-x-1: 86vw;
+  --mid-x-2: 50vw;
+  --end-x: -30vw;
+  --duration: 31s;
+  --delay: -19s;
+}
+
+/* Front floating petals */
+.floating-petal-front {
+  --petal-width: 13px;
+  --petal-height: 20px;
+  --petal-opacity: 0.8;
+}
+
+.floating-petal-front-1 {
+  --start-x: 100vw;
+  --mid-x-1: 65vw;
+  --mid-x-2: 30vw;
+  --end-x: -18vw;
+  --duration: 16s;
+  --delay: -3s;
+}
+
+.floating-petal-front-2 {
+  --start-x: 112vw;
+  --mid-x-1: 76vw;
+  --mid-x-2: 36vw;
+  --end-x: -24vw;
+  --duration: 18s;
+  --delay: -8s;
+}
+
+.floating-petal-front-3 {
+  --start-x: 90vw;
+  --mid-x-1: 58vw;
+  --mid-x-2: 20vw;
+  --end-x: -20vw;
+  --duration: 15s;
+  --delay: -12s;
+}
+
+.floating-petal-front-4 {
+  --start-x: 120vw;
+  --mid-x-1: 82vw;
+  --mid-x-2: 42vw;
+  --end-x: -28vw;
+  --duration: 20s;
+  --delay: -5s;
+}
+
+.floating-petal-front-5 {
+  --start-x: 98vw;
+  --mid-x-1: 72vw;
+  --mid-x-2: 34vw;
+  --end-x: -14vw;
+  --duration: 17s;
+  --delay: -15s;
+}
+
+.floating-petal-front-6 {
+  --start-x: 108vw;
+  --mid-x-1: 70vw;
+  --mid-x-2: 25vw;
+  --end-x: -26vw;
+  --duration: 19s;
+  --delay: -10s;
+}
+
+.floating-petal-front-7 {
+  --start-x: 86vw;
+  --mid-x-1: 52vw;
+  --mid-x-2: 18vw;
+  --end-x: -16vw;
+  --duration: 14s;
+  --delay: -6s;
+}
+
+.floating-petal-front-8 {
+  --start-x: 116vw;
+  --mid-x-1: 80vw;
+  --mid-x-2: 40vw;
+  --end-x: -32vw;
+  --duration: 21s;
+  --delay: -18s;
+}
+
+/* Resting petals that land on the title */
+.resting-petal-group {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.resting-petal {
+  position: absolute;
+
+  --petal-width: 11px;
+  --petal-height: 17px;
+  --petal-opacity: 0.9;
+
+  opacity: 0;
+
+  animation-name: petal-land;
+  animation-duration: 3.2s;
+  animation-delay: var(--delay, 0s);
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+
+  will-change: transform;
+}
+
+@keyframes petal-land {
+  0% {
+    opacity: 0;
+    transform:
+      translate(var(--start-x, 300px), var(--start-y, -250px))
+      rotate(0deg)
+      scale(0.8);
+  }
+
+  20% {
+    opacity: var(--petal-opacity, 0.9);
+  }
+
+  55% {
+    transform:
+      translate(var(--mid-x, 80px), var(--mid-y, -60px))
+      rotate(var(--mid-rotate, 180deg))
+      scale(1);
+  }
+
+  80% {
+    transform:
+      translate(0, -8px)
+      rotate(var(--rest-rotate, 20deg))
+      scale(1);
+  }
+
+  100% {
+    opacity: var(--petal-opacity, 0.9);
+    transform:
+      translate(0, 0)
+      rotate(var(--rest-rotate, 20deg))
+      scale(1);
+  }
+}
+
+/* 
+  For resting petals:
+  top/left = where the petal finally lands.
+  start-x/start-y = where it begins falling from.
+  delay = when it starts falling.
+*/
+
+.resting-petal-1 {
+  top: -16px;
+  left: 8%;
+  z-index: 1;
+  --delay: 0.2s;
+  --start-x: 340px;
+  --start-y: -260px;
+  --mid-x: 90px;
+  --mid-y: -70px;
+  --mid-rotate: 120deg;
+  --rest-rotate: -28deg;
+}
+
+.resting-petal-2 {
+  top: -12px;
+  left: 16%;
+  z-index: 2;
+  --delay: 0.45s;
+  --start-x: 390px;
+  --start-y: -300px;
+  --mid-x: 110px;
+  --mid-y: -90px;
+  --mid-rotate: 210deg;
+  --rest-rotate: 32deg;
+}
+
+.resting-petal-3 {
+  top: -20px;
+  left: 24%;
+  z-index: 3;
+  --delay: 0.7s;
+  --start-x: 300px;
+  --start-y: -270px;
+  --mid-x: 70px;
+  --mid-y: -75px;
+  --mid-rotate: 160deg;
+  --rest-rotate: -12deg;
+}
+
+.resting-petal-4 {
+  top: -10px;
+  left: 31%;
+  z-index: 4;
+  --delay: 0.95s;
+  --start-x: 430px;
+  --start-y: -280px;
+  --mid-x: 130px;
+  --mid-y: -80px;
+  --mid-rotate: 250deg;
+  --rest-rotate: 55deg;
+}
+
+.resting-petal-5 {
+  top: -18px;
+  left: 39%;
+  z-index: 5;
+  --delay: 1.2s;
+  --start-x: 360px;
+  --start-y: -330px;
+  --mid-x: 100px;
+  --mid-y: -100px;
+  --mid-rotate: 190deg;
+  --rest-rotate: -45deg;
+}
+
+.resting-petal-6 {
+  top: -8px;
+  left: 46%;
+  z-index: 6;
+  --delay: 1.45s;
+  --start-x: 410px;
+  --start-y: -250px;
+  --mid-x: 120px;
+  --mid-y: -60px;
+  --mid-rotate: 230deg;
+  --rest-rotate: 18deg;
+}
+
+.resting-petal-7 {
+  top: -21px;
+  left: 53%;
+  z-index: 7;
+  --delay: 1.7s;
+  --start-x: 320px;
+  --start-y: -310px;
+  --mid-x: 80px;
+  --mid-y: -95px;
+  --mid-rotate: 145deg;
+  --rest-rotate: -35deg;
+}
+
+.resting-petal-8 {
+  top: -13px;
+  left: 60%;
+  z-index: 8;
+  --delay: 1.95s;
+  --start-x: 460px;
+  --start-y: -290px;
+  --mid-x: 150px;
+  --mid-y: -85px;
+  --mid-rotate: 280deg;
+  --rest-rotate: 40deg;
+}
+
+.resting-petal-9 {
+  top: -17px;
+  left: 68%;
+  z-index: 9;
+  --delay: 2.2s;
+  --start-x: 370px;
+  --start-y: -340px;
+  --mid-x: 110px;
+  --mid-y: -105px;
+  --mid-rotate: 200deg;
+  --rest-rotate: -18deg;
+}
+
+.resting-petal-10 {
+  top: -9px;
+  left: 76%;
+  z-index: 10;
+  --delay: 2.45s;
+  --start-x: 440px;
+  --start-y: -260px;
+  --mid-x: 140px;
+  --mid-y: -70px;
+  --mid-rotate: 260deg;
+  --rest-rotate: 65deg;
+}
+
+.resting-petal-11 {
+  top: 2px;
+  left: 21%;
+  z-index: 11;
+  --delay: 2.7s;
+  --start-x: 350px;
+  --start-y: -260px;
+  --mid-x: 95px;
+  --mid-y: -65px;
+  --mid-rotate: 175deg;
+  --rest-rotate: 22deg;
+}
+
+.resting-petal-12 {
+  top: 4px;
+  left: 36%;
+  z-index: 12;
+  --delay: 2.95s;
+  --start-x: 400px;
+  --start-y: -300px;
+  --mid-x: 125px;
+  --mid-y: -90px;
+  --mid-rotate: 220deg;
+  --rest-rotate: -55deg;
+}
+
+.resting-petal-13 {
+  top: 1px;
+  left: 50%;
+  z-index: 13;
+  --delay: 3.2s;
+  --start-x: 315px;
+  --start-y: -285px;
+  --mid-x: 85px;
+  --mid-y: -80px;
+  --mid-rotate: 150deg;
+  --rest-rotate: 10deg;
+}
+
+.resting-petal-14 {
+  top: 5px;
+  left: 64%;
+  z-index: 14;
+  --delay: 3.45s;
+  --start-x: 455px;
+  --start-y: -315px;
+  --mid-x: 155px;
+  --mid-y: -95px;
+  --mid-rotate: 290deg;
+  --rest-rotate: -30deg;
+}
+
+.resting-petal-15 {
+  top: 3px;
+  left: 80%;
+  z-index: 15;
+  --delay: 3.7s;
+  --start-x: 380px;
+  --start-y: -275px;
+  --mid-x: 100px;
+  --mid-y: -75px;
+  --mid-rotate: 205deg;
+  --rest-rotate: 48deg;
+}
+
+/* Accessibility: reduce animation for users who prefer less motion */
+@media (prefers-reduced-motion: reduce) {
+  .floating-petal,
+  .resting-petal {
+    animation: none;
+  }
+
+  .resting-petal {
+    opacity: 0.7;
+    transform: rotate(var(--rest-rotate, 20deg));
+  }
+}
