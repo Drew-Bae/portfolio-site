@@ -134,7 +134,7 @@
   opacity: 0;
 
   animation-name: petal-land;
-  animation-duration: 8s;
+  animation-duration: 10s;
   animation-delay: var(--delay, 0s);
   animation-timing-function: ease-out;
   animation-fill-mode: forwards;
@@ -175,7 +175,7 @@
   top: -2px;
   left: 8%;
   z-index: 1;
-  --delay: 0.2s;
+  --delay: 0s;
   --start-x: 80vw;
   --start-y: -100vh;
   --mid-x: 90px;
@@ -185,10 +185,10 @@
 }
 
 .resting-petal-2 {
-  top: 14px;
-  left: 14%;
+  top: 13.5px;
+  left: 25.1%;
   z-index: 2;
-  --delay: 2s;
+  --delay: 6s;
   --start-x: 80vw;
   --start-y: -100vh;
   --mid-x: 110px;
@@ -198,25 +198,25 @@
 }
 
 .resting-petal-3 {
-  top: 13px;
-  left: 24%;
+  top: 18.3px;
+  left: 74%;
   z-index: 3;
-  --delay: 2s;
+  --delay: 8s;
   --start-x: 80vw;
   --start-y: -100vh;
   --mid-x: 70px;
   --mid-y: -75px;
   --mid-rotate: 160deg;
-  --rest-rotate: -12deg;
+  --rest-rotate: 60deg;
 }
 
 .resting-petal-4 {
-  top: 9.5px;
-  left: 27.7%;
+  top: 13px;
+  left: 14.5%;
   z-index: 4;
-  --delay: 0.95s;
-  --start-x: 430px;
-  --start-y: -280px;
+  --delay: 13s;
+  --start-x: 80vw;
+  --start-y: -100vh;
   --mid-x: 130px;
   --mid-y: -80px;
   --mid-rotate: 250deg;
@@ -224,12 +224,12 @@
 }
 
 .resting-petal-5 {
-  top: 13px;
-  left: 40.5%;
+  top: 7px;
+  left: 72.3%;
   z-index: 5;
-  --delay: 1.2s;
-  --start-x: 360px;
-  --start-y: -330px;
+  --delay: 21s;
+  --start-x: 80vw;
+  --start-y: -100vh;
   --mid-x: 100px;
   --mid-y: -100px;
   --mid-rotate: 190deg;
@@ -237,90 +237,90 @@
 }
 
 .resting-petal-6 {
-  top: 11px;
-  left: 44%;
+  top: 11.5px;
+  left: 19.4%;
   z-index: 6;
-  --delay: 1.45s;
-  --start-x: 410px;
-  --start-y: -250px;
+  --delay: 21s;
+  --start-x: 80vw;
+  --start-y: -100vh;
   --mid-x: 120px;
   --mid-y: -60px;
   --mid-rotate: 230deg;
-  --rest-rotate: 280deg;
+  --rest-rotate: 275deg;
 }
 
 .resting-petal-7 {
-  top: 3px;
+  top: 4px;
   left: 12%;
   z-index: 7;
-  --delay: 1.7s;
-  --start-x: 320px;
-  --start-y: -310px;
+  --delay: 23s;
+  --start-x: 80vw;
+  --start-y: -100vh;
   --mid-x: 80px;
   --mid-y: -95px;
   --mid-rotate: 145deg;
-  --rest-rotate: -30deg;
+  --rest-rotate: -26deg;
 }
 
 .resting-petal-8 {
-  top: -2.2px;
-  left: 63%;
+  top: 21px;
+  left: 85.5%;
   z-index: 8;
-  --delay: 1.95s;
-  --start-x: 460px;
-  --start-y: -290px;
+  --delay: 30s;
+  --start-x: 80vw;
+  --start-y: -100vh;
   --mid-x: 150px;
   --mid-y: -85px;
   --mid-rotate: 280deg;
-  --rest-rotate: 110deg;
+  --rest-rotate: 130deg;
 }
 
 .resting-petal-9 {
-  top: -5.59px;
-  left: 66.3%;
+  top: 3px;
+  left: 17.5%;
   z-index: 9;
-  --delay: 2.2s;
-  --start-x: 370px;
-  --start-y: -340px;
+  --delay: 32s;
+  --start-x: 80vw;
+  --start-y: -100vh;
   --mid-x: 110px;
   --mid-y: -105px;
   --mid-rotate: 200deg;
-  --rest-rotate: -24deg;
+  --rest-rotate: 260deg;
 }
 
 .resting-petal-10 {
-  top: 19px;
-  left: 73.8%;
+  top: 13px;
+  left: 47.6%;
   z-index: 10;
-  --delay: 2.45s;
-  --start-x: 440px;
-  --start-y: -260px;
+  --delay: 40s;
+  --start-x: 80vw;
+  --start-y: -100vh;
   --mid-x: 140px;
   --mid-y: -70px;
   --mid-rotate: 260deg;
-  --rest-rotate: 40deg;
+  --rest-rotate: -30deg;
 }
 
 .resting-petal-11 {
-  top: 10px;
-  left: 20.5%;
+  top: 11.3px;
+  left: 80%;
   z-index: 11;
-  --delay: 2.7s;
-  --start-x: 350px;
-  --start-y: -260px;
+  --delay: 42s;
+  --start-x: 80vw;
+  --start-y: -100vh;
   --mid-x: 95px;
   --mid-y: -65px;
   --mid-rotate: 175deg;
-  --rest-rotate: 50deg;
+  --rest-rotate: 110deg;
 }
 
 .resting-petal-12 {
-  top: 15px;
-  left: 33.5%;
+  top: -3.5px;
+  left: 13.8%;
   z-index: 12;
-  --delay: 2.95s;
-  --start-x: 400px;
-  --start-y: -300px;
+  --delay: 46s;
+  --start-x: 80vw;
+  --start-y: -100vh;
   --mid-x: 125px;
   --mid-y: -90px;
   --mid-rotate: 220deg;
@@ -328,38 +328,38 @@
 }
 
 .resting-petal-13 {
-  top: 11px;
-  left: 48%;
+  top: -3px;
+  left: 64%;
   z-index: 13;
-  --delay: 3.2s;
-  --start-x: 315px;
-  --start-y: -285px;
+  --delay: 47s;
+  --start-x: 80vw;
+  --start-y: -100vh;
   --mid-x: 85px;
   --mid-y: -80px;
   --mid-rotate: 150deg;
-  --rest-rotate: 300deg;
+  --rest-rotate: 80deg;
 }
 
 .resting-petal-14 {
-  top: 6.5px;
-  left: 72.5%;
+  top: 6.8px;
+  left: 75.8%;
   z-index: 14;
-  --delay: 3.45s;
-  --start-x: 455px;
-  --start-y: -315px;
+  --delay: 50s;
+  --start-x: 80vw;
+  --start-y: -100vh;
   --mid-x: 155px;
   --mid-y: -95px;
   --mid-rotate: 290deg;
-  --rest-rotate: -30deg;
+  --rest-rotate: -50deg;
 }
 
 .resting-petal-15 {
-  top: 11px;
-  left: 77%;
+  top: 6px;
+  left: 23.4%;
   z-index: 15;
-  --delay: 3.7s;
-  --start-x: 380px;
-  --start-y: -275px;
+  --delay: 57s;
+  --start-x: 80vw;
+  --start-y: -100vh;
   --mid-x: 100px;
   --mid-y: -75px;
   --mid-rotate: 205deg;
