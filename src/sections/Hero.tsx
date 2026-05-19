@@ -17,9 +17,37 @@ type FloatingRoute = {
   weight: number
 }
 
+type RestingPetalPlacement = {
+  left: number
+  top: number
+  rotate: number
+  delay: number
+  size?: number
+  opacity?: number
+  startX?: string
+  startY?: string
+}
+
 const backPetals = Array.from({ length: 18 }, (_, index) => index + 1)
-const restingPetals = Array.from({ length: 15 }, (_, index) => index + 1)
 const frontPetals = Array.from({ length: 10 }, (_, index) => index + 1)
+
+const restingPetalPlacements: RestingPetalPlacement[] = [
+  { left: 8, top: -0.03, rotate: -80, delay: 0, size: 0.95 },
+  { left: 25.1, top: 0.17, rotate: 40, delay: 6, size: 1.02 },
+  { left: 74, top: 0.23, rotate: 60, delay: 8, size: 0.98 },
+  { left: 14.5, top: 0.16, rotate: 55, delay: 13, size: 1.04 },
+  { left: 72.3, top: 0.09, rotate: -45, delay: 21 },
+  { left: 19.4, top: 0.14, rotate: 275, delay: 21, size: 0.92 },
+  { left: 12, top: 0.05, rotate: -26, delay: 23, size: 0.96 },
+  { left: 85.5, top: 0.26, rotate: 130, delay: 30, size: 0.9 },
+  { left: 17.5, top: 0.04, rotate: 260, delay: 32, size: 1.02 },
+  { left: 47.6, top: 0.16, rotate: -30, delay: 40, size: 0.94 },
+  { left: 80, top: 0.14, rotate: 110, delay: 42, size: 0.96 },
+  { left: 13.8, top: -0.04, rotate: -55, delay: 46, size: 1.04 },
+  { left: 64, top: -0.04, rotate: 80, delay: 47, size: 0.92 },
+  { left: 75.8, top: 0.09, rotate: -50, delay: 50, size: 1.02 },
+  { left: 23.4, top: 0.08, rotate: 55, delay: 57, size: 0.9 },
+]
 
 const floatingRoutes: FloatingRoute[] = [
   // Main route: top/right to bottom/left. This is closest to your original orange path.
@@ -113,6 +141,23 @@ function createFloatingPetalStyle(layer: "back" | "front"): PetalStyle {
   }
 }
 
+function createRestingPetalStyle(placement: RestingPetalPlacement, index: number): PetalStyle {
+  const size = placement.size ?? 1
+
+  return {
+    top: `${placement.top}em`,
+    left: `${placement.left}%`,
+    zIndex: index + 1,
+    "--delay": `${placement.delay}s`,
+    "--start-x": placement.startX ?? "80vw",
+    "--start-y": placement.startY ?? "-100vh",
+    "--petal-width": `${0.14 * size}em`,
+    "--petal-height": `${0.22 * size}em`,
+    "--petal-opacity": placement.opacity ?? 0.9,
+    "--rest-rotate": `${placement.rotate}deg`,
+  }
+}
+
 function Hero() {
   const backPetalStyles = useMemo(
     () => backPetals.map(() => createFloatingPetalStyle("back")),
@@ -121,6 +166,11 @@ function Hero() {
 
   const frontPetalStyles = useMemo(
     () => frontPetals.map(() => createFloatingPetalStyle("front")),
+    [],
+  )
+
+  const restingPetalStyles = useMemo(
+    () => restingPetalPlacements.map(createRestingPetalStyle),
     [],
   )
 
@@ -144,10 +194,11 @@ function Hero() {
 
           {/* Petals that land and stay on the text */}
           <span className="resting-petal-group" aria-hidden="true">
-            {restingPetals.map((petalNumber) => (
+            {restingPetalPlacements.map((_, index) => (
               <span
-                key={`resting-${petalNumber}`}
-                className={`resting-petal resting-petal-${petalNumber}`}
+                key={`resting-${index + 1}`}
+                className="resting-petal"
+                style={restingPetalStyles[index]}
               />
             ))}
           </span>

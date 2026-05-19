@@ -22,6 +22,8 @@
     font-size: clamp(2.5rem, 6vw, 5rem);
     line-height: 1;
     color: #fff7f0;
+    white-space: nowrap;
+    isolation: isolate;
 }
 
 .hero-title-text {
@@ -75,7 +77,7 @@
 @keyframes floating-petal-fall {
     0% {
         opacity: 0;
-        transform: 
+        transform:
             translate3d(var(--start-x, 100vw), var(--start-y, -15vh), 0)
             rotate(0deg);
     }
@@ -85,7 +87,7 @@
     }
 
     40% {
-        transform: 
+        transform:
             translate3d(var(--mid-x, 60vw), var(--mid-y, 60vh), 0)
             rotate(120deg);
     }
@@ -96,7 +98,7 @@
 
     100% {
         opacity: 0;
-        transform: 
+        transform:
             translate3d(var(--end-x, -20vw), var(--end-y, 115vh), 0)
             rotate(var(--end-rotate, 420deg));
     }
@@ -116,265 +118,62 @@
     --petal-opacity: 0.8;
 }
 
-/* Resting petals that land on the title */
+/*
+  Resting petals are now attached to the title's own coordinate system.
+  Their final positions use % for horizontal placement and em for size/top offset,
+  so they scale with the Drew Bae wordmark instead of one fixed screen size.
+*/
 .resting-petal-group {
-  position: absolute;
-  inset: 0;
-  z-index: 4;
-  pointer-events: none;
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
 }
 
 .resting-petal {
-  position: absolute;
+    position: absolute;
+    opacity: 0;
 
-  --petal-width: 11px;
-  --petal-height: 17px;
-  --petal-opacity: 0.9;
+    animation-name: petal-land;
+    animation-duration: 10s;
+    animation-delay: var(--delay, 0s);
+    animation-timing-function: ease-out;
+    animation-fill-mode: forwards;
 
-  opacity: 0;
-
-  animation-name: petal-land;
-  animation-duration: 10s;
-  animation-delay: var(--delay, 0s);
-  animation-timing-function: ease-out;
-  animation-fill-mode: forwards;
-
-  will-change: transform;
+    will-change: transform;
 }
 
 @keyframes petal-land {
-  0% {
-    opacity: 0;
-    transform:
-      translate(var(--start-x, 300px), var(--start-y, -250px))
-      rotate(0deg)
-      scale(0.8);
-  }
+    0% {
+        opacity: 0;
+        transform:
+            translate(var(--start-x, 300px), var(--start-y, -250px))
+            rotate(0deg)
+            scale(0.8);
+    }
 
-  20% {
-    opacity: var(--petal-opacity, 0.9);
-  }
+    20% {
+        opacity: var(--petal-opacity, 0.9);
+    }
 
-  100% {
-    opacity: var(--petal-opacity, 0.9);
-    transform:
-      translate(0, 0)
-      rotate(var(--rest-rotate, 20deg))
-      scale(1);
-  }
-}
-
-/* 
-  For resting petals:
-  top/left = where the petal finally lands.
-  start-x/start-y = where it begins falling from.
-  delay = when it starts falling.
-*/
-
-.resting-petal-1 {
-  top: -2px;
-  left: 8%;
-  z-index: 1;
-  --delay: 0s;
-  --start-x: 80vw;
-  --start-y: -100vh;
-  --mid-x: 90px;
-  --mid-y: -70px;
-  --mid-rotate: 120deg;
-  --rest-rotate: -80deg;
-}
-
-.resting-petal-2 {
-  top: 13.5px;
-  left: 25.1%;
-  z-index: 2;
-  --delay: 6s;
-  --start-x: 80vw;
-  --start-y: -100vh;
-  --mid-x: 110px;
-  --mid-y: -90px;
-  --mid-rotate: 210deg;
-  --rest-rotate: 40deg;
-}
-
-.resting-petal-3 {
-  top: 18.3px;
-  left: 74%;
-  z-index: 3;
-  --delay: 8s;
-  --start-x: 80vw;
-  --start-y: -100vh;
-  --mid-x: 70px;
-  --mid-y: -75px;
-  --mid-rotate: 160deg;
-  --rest-rotate: 60deg;
-}
-
-.resting-petal-4 {
-  top: 13px;
-  left: 14.5%;
-  z-index: 4;
-  --delay: 13s;
-  --start-x: 80vw;
-  --start-y: -100vh;
-  --mid-x: 130px;
-  --mid-y: -80px;
-  --mid-rotate: 250deg;
-  --rest-rotate: 55deg;
-}
-
-.resting-petal-5 {
-  top: 7px;
-  left: 72.3%;
-  z-index: 5;
-  --delay: 21s;
-  --start-x: 80vw;
-  --start-y: -100vh;
-  --mid-x: 100px;
-  --mid-y: -100px;
-  --mid-rotate: 190deg;
-  --rest-rotate: -45deg;
-}
-
-.resting-petal-6 {
-  top: 11.5px;
-  left: 19.4%;
-  z-index: 6;
-  --delay: 21s;
-  --start-x: 80vw;
-  --start-y: -100vh;
-  --mid-x: 120px;
-  --mid-y: -60px;
-  --mid-rotate: 230deg;
-  --rest-rotate: 275deg;
-}
-
-.resting-petal-7 {
-  top: 4px;
-  left: 12%;
-  z-index: 7;
-  --delay: 23s;
-  --start-x: 80vw;
-  --start-y: -100vh;
-  --mid-x: 80px;
-  --mid-y: -95px;
-  --mid-rotate: 145deg;
-  --rest-rotate: -26deg;
-}
-
-.resting-petal-8 {
-  top: 21px;
-  left: 85.5%;
-  z-index: 8;
-  --delay: 30s;
-  --start-x: 80vw;
-  --start-y: -100vh;
-  --mid-x: 150px;
-  --mid-y: -85px;
-  --mid-rotate: 280deg;
-  --rest-rotate: 130deg;
-}
-
-.resting-petal-9 {
-  top: 3px;
-  left: 17.5%;
-  z-index: 9;
-  --delay: 32s;
-  --start-x: 80vw;
-  --start-y: -100vh;
-  --mid-x: 110px;
-  --mid-y: -105px;
-  --mid-rotate: 200deg;
-  --rest-rotate: 260deg;
-}
-
-.resting-petal-10 {
-  top: 13px;
-  left: 47.6%;
-  z-index: 10;
-  --delay: 40s;
-  --start-x: 80vw;
-  --start-y: -100vh;
-  --mid-x: 140px;
-  --mid-y: -70px;
-  --mid-rotate: 260deg;
-  --rest-rotate: -30deg;
-}
-
-.resting-petal-11 {
-  top: 11.3px;
-  left: 80%;
-  z-index: 11;
-  --delay: 42s;
-  --start-x: 80vw;
-  --start-y: -100vh;
-  --mid-x: 95px;
-  --mid-y: -65px;
-  --mid-rotate: 175deg;
-  --rest-rotate: 110deg;
-}
-
-.resting-petal-12 {
-  top: -3.5px;
-  left: 13.8%;
-  z-index: 12;
-  --delay: 46s;
-  --start-x: 80vw;
-  --start-y: -100vh;
-  --mid-x: 125px;
-  --mid-y: -90px;
-  --mid-rotate: 220deg;
-  --rest-rotate: -55deg;
-}
-
-.resting-petal-13 {
-  top: -3px;
-  left: 64%;
-  z-index: 13;
-  --delay: 47s;
-  --start-x: 80vw;
-  --start-y: -100vh;
-  --mid-x: 85px;
-  --mid-y: -80px;
-  --mid-rotate: 150deg;
-  --rest-rotate: 80deg;
-}
-
-.resting-petal-14 {
-  top: 6.8px;
-  left: 75.8%;
-  z-index: 14;
-  --delay: 50s;
-  --start-x: 80vw;
-  --start-y: -100vh;
-  --mid-x: 155px;
-  --mid-y: -95px;
-  --mid-rotate: 290deg;
-  --rest-rotate: -50deg;
-}
-
-.resting-petal-15 {
-  top: 6px;
-  left: 23.4%;
-  z-index: 15;
-  --delay: 57s;
-  --start-x: 80vw;
-  --start-y: -100vh;
-  --mid-x: 100px;
-  --mid-y: -75px;
-  --mid-rotate: 205deg;
-  --rest-rotate: 55deg;
+    100% {
+        opacity: var(--petal-opacity, 0.9);
+        transform:
+            translate(0, 0)
+            rotate(var(--rest-rotate, 20deg))
+            scale(1);
+    }
 }
 
 /* Accessibility: reduce animation for users who prefer less motion */
 @media (prefers-reduced-motion: reduce) {
-  .floating-petal,
-  .resting-petal {
-    animation: none;
-  }
+    .floating-petal,
+    .resting-petal {
+        animation: none;
+    }
 
-  .resting-petal {
-    opacity: 0.7;
-    transform: rotate(var(--rest-rotate, 20deg));
-  }
+    .resting-petal {
+        opacity: 0.7;
+        transform: rotate(var(--rest-rotate, 20deg));
+    }
 }
